@@ -3,9 +3,9 @@ import { parseDep } from "./parse";
 import { program } from "commander";
 
 
-program.name("@momei-x/create").description("@momei-x/create cli");
+program.description("@momei-x/create cli");
 program
-  .command("create-preset")
+  .command("create")
   .description("create preset")
   .option("--typescript", "typescipt")
   .option("--eslint", "eslint")

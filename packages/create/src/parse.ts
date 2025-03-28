@@ -10,10 +10,11 @@ import prompts from "prompts";
 import { execSync } from "node:child_process";
 import chalk from "chalk";
 import { fileURLToPath } from "node:url";
+import { promptPackageManagerSelect } from "./manager";
 type PresetType = "eslint" | "prettier" | "typescript" | "stylelint";
 
 const cwd = process.cwd();
-console.log(111);
+
 
 
 // 获取当前文件的绝对路径
@@ -41,34 +42,22 @@ export const pkgMap = {
   },
   // ...
 };
-function detectPackageManager() {
-  const userAgent = process.env.npm_config_user_agent;
 
-  if (userAgent) {
-    if (userAgent.includes("pnpm")) {
-      return "pnpm";
-    } else if (userAgent.includes("yarn")) {
-      return "yarn";
-    } else if (userAgent.includes("npm")) {
-      return "npm";
-    }
-  }
-
-  return "unknown";
-}
 export const parseDep = async (dependency: PresetType) => {
   resolvePreset(dependency);
   if (!isPackageExists(pkgMap[dependency].package)) {
     const response = await prompts({
       type: "confirm",
       name: "install",
-      message: `You have not installed this "${dependency}，install it"？`,
+      message: `You have not installed ${dependency}，install it？`,
       initial: true, // 默认值为 Yes
     });
     if (response.install) {
       try {
+        const selected = await promptPackageManagerSelect()
+        const pkgManager = selected.packageManager
         // 使用 npm 安装依赖
-        execSync(`${detectPackageManager()} install ${dependency}`, {
+        execSync(`${pkgManager} install ${dependency}`, {
           stdio: "inherit",
         });
         console.log(chalk.bgCyan(`"${dependency}" installed success！`));

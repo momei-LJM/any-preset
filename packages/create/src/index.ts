@@ -7,10 +7,10 @@ program.name("@momei-x/create").description("@momei-x/create cli");
 program
   .command("create-preset")
   .description("create preset")
-  .option("-ts --typescript", "typescipt")
-  .option("-eslint --eslint", "eslint")
-  .option("-prettier --prettier", "prettier")
-  .option("-stylelint --stylelint", "stylelint")
+  .option("--typescript", "typescipt")
+  .option("--eslint", "eslint")
+  .option("--prettier", "prettier")
+  .option("--stylelint", "stylelint")
   .action(({ typescript, eslint, prettier, stylelint }) => {
     if (typescript) {
       parseDep("typescript");

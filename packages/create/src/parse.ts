@@ -1,5 +1,5 @@
 import fs from "fs-extra";
-import path from "node:path";
+import path, { dirname } from "node:path";
 import {
   getPackageInfo,
   importModule,
@@ -9,9 +9,19 @@ import {
 import prompts from "prompts";
 import { execSync } from "node:child_process";
 import chalk from "chalk";
+import { fileURLToPath } from "node:url";
 type PresetType = "eslint" | "prettier" | "typescript" | "stylelint";
 
 const cwd = process.cwd();
+console.log(111);
+
+
+// 获取当前文件的绝对路径
+const __filename = fileURLToPath(import.meta.url);
+
+
+// 获取当前文件所在的目录
+const __dirname = dirname(__filename);
 export const pkgMap = {
   eslint: {
     package: "eslint",

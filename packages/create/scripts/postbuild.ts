@@ -1,8 +1,8 @@
 import fs from "fs-extra";
 import path from "path";
-import { glob } from "fast-glob";
+import fg from "fast-glob";
 const postbuild = async () => {
-  const fileList = await glob(
+  const fileList = await fg.glob(
     ["src/presets/*.{js,ts,json}"],
     {
       cwd: process.cwd(),

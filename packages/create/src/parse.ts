@@ -13,6 +13,13 @@ import { fileURLToPath } from "node:url";
 import { promptPackageManagerSelect } from "./manager";
 type PresetType = "eslint" | "prettier" | "typescript" | "stylelint";
 
+const SUB_DEPS: Record<PresetType, string[]> = {
+  eslint: ["eslint", "@antfu/eslint-config"],
+  prettier: ["prettier"],
+  typescript: ["typescript"],
+  stylelint: ["stylelint"],
+}
+
 const cwd = process.cwd();
 
 
@@ -25,27 +32,28 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 export const pkgMap = {
   eslint: {
-    package: "eslint",
+    package: SUB_DEPS["eslint"],
     preset: path.resolve(__dirname, "eslint.config.js"),
   },
   prettier: {
-    package: "prettier",
-    preset: path.resolve(__dirname, ".prettierrc.js"),
+    package: SUB_DEPS["prettier"],
+    preset: path.resolve(__dirname, "prettier.config.js"),
   },
   typescript: {
-    package: "typescript",
+    package: SUB_DEPS["typescript"],
     preset: path.resolve(__dirname, "tsconfig.json"),
   },
   stylelint: {
-    package: "stylelint",
-    preset: path.resolve(__dirname, "stylelint.config.ts"),
+    package: SUB_DEPS["stylelint"],
+    preset: path.resolve(__dirname, "stylelint.config.js"),
   },
   // ...
 };
 
 export const parseDep = async (dependency: PresetType) => {
   resolvePreset(dependency);
-  if (!isPackageExists(pkgMap[dependency].package)) {
+  const needInstall = pkgMap[dependency].package.filter((dep) => !isPackageExists(dep));
+  if (needInstall?.length) {
     const response = await prompts({
       type: "confirm",
       name: "install",
@@ -56,11 +64,12 @@ export const parseDep = async (dependency: PresetType) => {
       try {
         const selected = await promptPackageManagerSelect()
         const pkgManager = selected.packageManager
-        // 使用 npm 安装依赖
-        execSync(`${pkgManager} install ${dependency}`, {
+
+        const depsStr = needInstall.map((dep) => `${dep}`);
+        execSync(`${pkgManager} install ${depsStr.join(" ")} -D`, {
           stdio: "inherit",
         });
-        console.log(chalk.bgCyan(`"${dependency}" installed success！`));
+        console.log(chalk.bgCyan(`"${depsStr.join('\n')}" installed success！`));
       } catch (installErr) {
         console.error(`install "${dependency}" failed：${installErr}`);
       }

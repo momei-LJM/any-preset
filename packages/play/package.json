@@ -13,5 +13,8 @@
   "dependencies": {
     "@momei-x/create": "workspace:^",
     "eslint": "^9.23.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3"
   }
 }

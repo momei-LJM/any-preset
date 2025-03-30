@@ -11,6 +11,7 @@ import { execSync } from "node:child_process";
 import chalk from "chalk";
 import { fileURLToPath } from "node:url";
 import { promptPackageManagerSelect } from "./manager";
+import logger from "./log";
 type PresetType = "eslint" | "prettier" | "typescript" | "stylelint";
 
 const SUB_DEPS: Record<PresetType, string[]> = {
@@ -69,7 +70,7 @@ export const parseDep = async (dependency: PresetType) => {
         execSync(`${pkgManager} install ${depsStr.join(" ")} -D`, {
           stdio: "inherit",
         });
-        console.log(chalk.bgCyan(`"${depsStr.join('\n')}" installed success！`));
+        logger.success(`${depsStr.join('\n')} installed success！`)
       } catch (installErr) {
         console.error(`install "${dependency}" failed：${installErr}`);
       }
@@ -81,5 +82,5 @@ const resolvePreset = (type: PresetType) => {
   const preset = pkgMap[type].preset;
   const baseName = path.basename(preset);
   fs.copyFileSync(preset, path.resolve(cwd, baseName));
-  chalk.bgCyan(`"${baseName}" created.`);
+  logger.success(`${baseName} created.`)
 };

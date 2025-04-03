@@ -1,5 +1,9 @@
-import fs from "fs-extra";
+import { execSync } from "node:child_process";
 import path, { dirname } from "node:path";
+import process from "node:process";
+import { fileURLToPath } from "node:url";
+import chalk from "chalk";
+import fs from "fs-extra";
 import {
   getPackageInfo,
   importModule,
@@ -7,11 +11,9 @@ import {
   resolveModule,
 } from "local-pkg";
 import prompts from "prompts";
-import { execSync } from "node:child_process";
-import chalk from "chalk";
-import { fileURLToPath } from "node:url";
-import { promptPackageManagerSelect } from "./manager";
 import logger from "./log";
+import { promptPackageManagerSelect } from "./manager";
+
 type PresetType = "eslint" | "prettier" | "typescript" | "stylelint";
 
 const SUB_DEPS: Record<PresetType, string[]> = {
@@ -33,25 +35,30 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 export const pkgMap = {
   eslint: {
-    package: SUB_DEPS["eslint"],
+    package: SUB_DEPS.eslint,
     preset: path.resolve(__dirname, "eslint.config.js"),
   },
   prettier: {
-    package: SUB_DEPS["prettier"],
+    package: SUB_DEPS.prettier,
     preset: path.resolve(__dirname, "prettier.config.js"),
   },
   typescript: {
-    package: SUB_DEPS["typescript"],
+    package: SUB_DEPS.typescript,
     preset: path.resolve(__dirname, "tsconfig.json"),
   },
   stylelint: {
-    package: SUB_DEPS["stylelint"],
+    package: SUB_DEPS.stylelint,
     preset: path.resolve(__dirname, "stylelint.config.js"),
   },
   // ...
 };
 
-export const parseDep = async (dependency: PresetType) => {
+function isMonorepo() {
+  const workspaceFile = path.join(process.cwd(), 'pnpm-workspace.yaml');
+  return fs.existsSync(workspaceFile);
+}
+
+export async function parseDep(dependency: PresetType) {
   resolvePreset(dependency);
   const needInstall = pkgMap[dependency].package.filter((dep) => !isPackageExists(dep));
   if (needInstall?.length) {
@@ -67,7 +74,7 @@ export const parseDep = async (dependency: PresetType) => {
         const pkgManager = selected.packageManager
 
         const depsStr = needInstall.map((dep) => `${dep}`);
-        execSync(`${pkgManager} install ${depsStr.join(" ")} -D`, {
+        execSync(`${pkgManager} install ${depsStr.join(" ")} -D ${isMonorepo() ? "-w" : ""}`, {
           stdio: "inherit",
         });
         logger.success(`${depsStr.join('\n')} installed success！`)
@@ -76,11 +83,11 @@ export const parseDep = async (dependency: PresetType) => {
       }
     }
   }
-};
+}
 
-const resolvePreset = (type: PresetType) => {
+function resolvePreset(type: PresetType) {
   const preset = pkgMap[type].preset;
   const baseName = path.basename(preset);
   fs.copyFileSync(preset, path.resolve(cwd, baseName));
   logger.success(`${baseName} created.`)
-};
+}

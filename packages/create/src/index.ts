@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { parseDep } from "./parse";
 import { program } from "commander";
+import { parseDep } from "./parse";
 
 
 program.description("@momei-x/create cli");
@@ -22,5 +22,4 @@ program
       parseDep("prettier");
     }
   });
-
 program.parse();

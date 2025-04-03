@@ -37,7 +37,6 @@
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
     "@types/prompts": "^2.4.9",
-    "fast-glob": "^3.3.3",
-    "tsx": "^4.19.3"
+    "fast-glob": "^3.3.3"
   }
 }

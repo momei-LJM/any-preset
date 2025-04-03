@@ -1,6 +1,6 @@
 import prompts from "prompts";
 
-export const promptPackageManagerSelect = () => {
+export function promptPackageManagerSelect() {
   return prompts({
     type: "select",
     name: "packageManager",

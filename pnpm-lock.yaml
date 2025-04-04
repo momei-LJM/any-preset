@@ -54,9 +54,6 @@ importers:
 
   packages/create:
     dependencies:
-      '@momei-x/presets':
-        specifier: workspace:^
-        version: link:../presets
       chalk:
         specifier: ^5.4.1
         version: 5.4.1

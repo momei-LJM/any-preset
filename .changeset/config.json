@@ -7,5 +7,5 @@
   "access": "restricted",
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
-  "ignore": ["@momei-x/play", "@momei-x/any-presets"]
+  "ignore": ["play", "@momei-x/presets"]
 }

@@ -2,7 +2,7 @@ import process from 'node:process'
 import { execa } from 'execa'
 import minimist from 'minimist'
 
-const needPubPkgs = ["@momei/create"]
+const needPubPkgs = ["@momei-x/create"]
 const argvs = minimist(process.argv.slice(2))
 const { release } = argvs
 export async function build() {

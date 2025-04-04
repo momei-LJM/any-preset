@@ -2,6 +2,7 @@ import process from 'node:process'
 import { execa } from 'execa'
 import minimist from 'minimist'
 
+const needPubPkgs = ["@momei/create"]
 const argvs = minimist(process.argv.slice(2))
 const { release } = argvs
 export async function build() {
@@ -10,7 +11,7 @@ export async function build() {
   if (release) {
     await execa('changeset', ['add'], { stdio: 'inherit' })
     await execa('changeset', ['version'], { stdio: 'inherit' })
-    await execa('changeset', ['publish'], { stdio: 'inherit' })
+    await execa('changeset', ['publish', '--filter', needPubPkgs.join(" ")], { stdio: 'inherit' })
   }
 }
 

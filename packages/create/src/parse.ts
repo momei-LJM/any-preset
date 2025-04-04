@@ -2,13 +2,9 @@ import { execSync } from "node:child_process";
 import path, { dirname } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
-import chalk from "chalk";
 import fs from "fs-extra";
 import {
-  getPackageInfo,
-  importModule,
-  isPackageExists,
-  resolveModule,
+  isPackageExists
 } from "local-pkg";
 import prompts from "prompts";
 import logger from "./log";
@@ -17,7 +13,7 @@ import { promptPackageManagerSelect } from "./manager";
 type PresetType = "eslint" | "prettier" | "typescript" | "stylelint";
 
 const SUB_DEPS: Record<PresetType, string[]> = {
-  eslint: ["eslint", "@antfu/eslint-config"],
+  eslint: ["eslint", "@antfu/eslint-config", "eslint-config-prettier/flat"],
   prettier: ["prettier"],
   typescript: ["typescript"],
   stylelint: ["stylelint"],
